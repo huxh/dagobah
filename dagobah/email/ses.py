@@ -5,6 +5,10 @@ from botocore.exceptions import ClientError
 
 
 def amazon_ses(parent_class):
+    """
+
+    :type parent_class: dagobah.email.common.EmailTemplate
+    """
     class AmazonEmail(parent_class):
         def _construct_and_send(self, subject):
             client = boto3.client('ses', region_name=self.region_name, aws_access_key_id=self.aws_access_key_id,
@@ -20,7 +24,7 @@ def amazon_ses(parent_class):
                         'Body': {
                             'Html': {
                                 'Charset': 'UTF-8',
-                                'Data': self.message.get_payload(),
+                                'Data': self.message_content,
                             }
                         },
                         'Subject': {

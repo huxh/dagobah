@@ -21,6 +21,7 @@ class EmailTemplate(object):
         self.original_from_address = self.from_address
         self.from_address = self._apply_formatters(self.from_address)
         self.message = None
+        self.message_content = None
 
     def send_job_completed(self, data):
         raise NotImplementedError()

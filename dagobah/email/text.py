@@ -49,17 +49,18 @@ class TextEmail(EmailTemplate):
         for task in job.get('tasks', []):
             tasks += self._task_to_text(task)
             tasks += '\n\n'
-
-        return '\n'.join(['Job name: %s' % job.get('name', None),
-                          'Cron schedule: %s' % job.get('cron_schedule', None),
-                          'Next run: %s' % next_run,
-                          '',
-                          'Parent ID: %s' % job.get('parent_id', None),
-                          'Job ID: %s' % job.get('job_id', None),
-                          '',
-                          'Tasks Detail',
-                          '',
-                          tasks])
+        result = '\n'.join(['Job name: %s' % job.get('name', None),
+                            'Cron schedule: %s' % job.get('cron_schedule', None),
+                            'Next run: %s' % next_run,
+                            '',
+                            'Parent ID: %s' % job.get('parent_id', None),
+                            'Job ID: %s' % job.get('job_id', None),
+                            '',
+                            'Tasks Detail',
+                            '',
+                            tasks])
+        self.message_content = result
+        return result
 
     def _format_date(self, in_date):
         if (not in_date) or (not isinstance(in_date, datetime)):

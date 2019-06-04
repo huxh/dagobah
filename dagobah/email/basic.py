@@ -63,6 +63,7 @@ class BasicEmail(EmailTemplate):
         message = MIMEMultipart()
         content = premailer.transform(''.join(['<html><style>', css, '</style>',
                                                html, '</html>']))
+        self.message_content = content
         message.attach(MIMEText(content, 'html'))
         return message
 
