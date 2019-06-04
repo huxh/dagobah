@@ -3,7 +3,7 @@ Dagobah
 
 <img src="http://i.imgur.com/D5ZxGXA.png" height="400">
 
-[![Build Status](https://travis-ci.org/thieman/dagobah.png?branch=master)](https://travis-ci.org/thieman/dagobah?branch=master) [![PyPi version](https://img.shields.io/pypi/v/dagobah.svg)](https://pypi.python.org/pypi/dagobah/0.3.1)
+[![Build Status](https://api.travis-ci.com/gsksivesh/dagobah.png?branch=master)](https://travis-ci.com/gsksivesh/dagobah?branch=master) [![PyPi version](https://img.shields.io/pypi/v/dagobah.svg)](https://pypi.python.org/pypi/dagobah/0.3.1)
 
 Dagobah is a simple dependency-based job scheduler written in Python. Dagobah allows you to schedule periodic jobs using Cron syntax. Each job then kicks off a series of tasks (subprocesses) in an order defined by a dependency graph you can easily draw with click-and-drag in the web interface.
 
@@ -13,7 +13,7 @@ You can also [use Dagobah directly in Python.](../../wiki/Using Dagobah Directly
 
 ## Installation
 
-Dagobah works with Python 2.6 or 2.7.
+Dagobah works with Python 2.7 or 3.6.
 
     pip install dagobah
     dagobahd  # start the web interface on localhost:9000
@@ -66,8 +66,9 @@ To use a backend, you need to install the drivers using the commands below and t
  * [Utkarsh Sengar](https://twitter.com/utsengar)
  * Stephanie Wei
  * [Ryan Clough](https://github.com/rclough)
+ * [Sivesh Guttula](https://github.com/gsksivesh)
 
 #### Get Started Contributing
 
  * See the fledgling [wiki](../../wiki) or [create a new issue](../../issues) to get started
- * If you have any questions, go ahead and [email](mailto:travis.thieman@gmail.com) or [tweet at](https://twitter.com/thieman) me, or go ahead and create a new issue in this repository.
+ * If you have any questions, go ahead and [email](mailto:kittusrikrishnasivesh@gmail.com) or [tweet at](https://twitter.com/gsksivesh) me, or go ahead and create a new issue in this repository.
