@@ -3,9 +3,9 @@ from setuptools import setup
 setup(name='dagobah',
       version='0.3.2',
       description='Simple DAG-based job scheduler',
-      url='http://github.com/tthieman/dagobah',
-      author='Travis Thieman',
-      author_email='travis.thieman@gmail.com',
+      url='https://github.com/gsksivesh/dagobah',
+      author='Travis Thieman, Sivesh Guttula',
+      author_email='kittusrikrishnasivesh@gmail.com',
       license='WTFPL',
       packages=['dagobah',
                 'dagobah.backend',
@@ -53,7 +53,7 @@ setup(name='dagobah',
       test_suite='nose.collector',
       tests_require=['nose', 'pymongo'],
       entry_points={'console_scripts':
-                    ['dagobahd = dagobah.daemon.app:daemon_entrypoint',
-                     'echo_dagobah_conf = dagobah:print_standard_conf']
+                        ['dagobahd = dagobah.daemon.app:daemon_entrypoint',
+                         'echo_dagobah_conf = dagobah:print_standard_conf']
                     },
       zip_safe=False)
