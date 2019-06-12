@@ -883,6 +883,7 @@ class Task(object):
                 self.stdout += self.remote_channel.recv(1024)
             while self.remote_channel.recv_stderr_ready():
                 self.stderr += self.remote_channel.recv_stderr(1024)
+            self.remote_client.close()
             return self.remote_channel.recv_exit_status()
         # Otherwise check for finished local command
         elif self.process:
