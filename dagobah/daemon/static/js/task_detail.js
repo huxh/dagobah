@@ -173,7 +173,7 @@ function renderHistoryTable(data){
             historyTableTemplate({
             historyId: thisJob.log_id,
             runtime: run_time,
-            completionTime: completion_time,
+            completionTime: moment.utc(completion_time).local().format('YYMMDD HH:mm:ss'),
             logURL: $SCRIPT_ROOT + '/job/' + thisJob.job_id + '/' + taskName + '/' + thisJob.log_id
         })
         );

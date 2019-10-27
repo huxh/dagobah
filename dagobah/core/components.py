@@ -53,6 +53,7 @@ class JobState(object):
         self.status = None
 
         self.perms = {'allow_start': ['waiting', 'failed'],
+                      'allow_retry': ['failed'],  # only failed task allows to retry by Huxh
                       'allow_change_graph': ['waiting', 'failed'],
                       'allow_change_schedule': ['waiting', 'running', 'failed'],
                       'allow_edit_job': ['waiting', 'failed'],

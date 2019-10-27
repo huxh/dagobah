@@ -2,7 +2,7 @@ Dagobahd:
 
   # Controls Flask's debug parameter, which will give you stacktraces in your
   # browser and set Flask's request logger to the DEBUG level.
-  debug: False
+  debug: True
 
   # host and port for the Flask app. set host to 0.0.0.0 to listen on all IPs
   host: 127.0.0.1
@@ -18,13 +18,13 @@ Dagobahd:
   # choose one of the available backends
   # None: Dagobah will not use a backend to permanently store data
   # mongo: store results in MongoDB. see the MongoBackend section in this file
-  backend: None
+  backend: mongo
 
   # choose one of the available email templates
   # None: Dagobah won't send you emails when a job finishes or fails
   # text: Simple text format
   # basic: Simple, tabular HTML email
-  email: basic
+  email: None
 
   # SSH config file for remote host authentication.
   # If you don't plan on executing tasks on remote servers, leaving this
@@ -45,15 +45,15 @@ Logging:
     logfile: default
 
     # if True, also log to stdout
-    log_to_stdout: False
+    log_to_stdout: True
 
     # specify the log level to use
     # choose one of [debug, info, warning, error, critical]
-    loglevel: info
+    loglevel: debug
 
   # Logging settings for web requests through the Flask app
   Requests:
-    enabled: False
+    enabled: True
 
     # specify a full path to the log file
     # alternatively, specify "default" to log to a file in the dagobahd directory
@@ -61,12 +61,12 @@ Logging:
     logfile: default
 
     # if True, also log to stdout
-    log_to_stdout: False
+    log_to_stdout: True
 
     # specify the log level to use.
     # choose one of [debug, info, warning, error, critical]
     # If Dagobahd.debug is True, this will always be debug
-    loglevel: info
+    loglevel: debug
 
 Email:
 
@@ -79,7 +79,7 @@ Email:
   port: 587
 
   # email server authentication
-  auth_required: True
+  auth_required: False
   user: None
   password: None
 

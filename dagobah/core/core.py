@@ -23,7 +23,9 @@ logger = logging.getLogger('dagobah')
 
 
 class DagobahError(Exception):
-    logger.warn('DagobahError being constructed, something must have gone wrong')
+    #comment out the warning message when class imported
+    #by Huxh
+    #logger.warn('DagobahError being constructed, something must have gone wrong')
     pass
 
 
@@ -420,6 +422,13 @@ class Job(DAG):
         """ Restarts failed tasks of a job. """
 
         logger.info('Job {0} retrying all failed tasks'.format(self.name))
+
+        # judge job state to stop retry with job never failed 
+        # by Huxh
+        if not self.state.allow_retry:
+            raise DagobahError('job cannot be retried in its current state; ' +
+                               'it did not fail')
+
         self.initialize_snapshot()
 
         failed_task_names = []
@@ -835,12 +844,12 @@ class Task(object):
 
         # Handle task errors
         if self.terminate_sent:
-            self.stderr += '\nDAGOBAH SENT SIGTERM TO THIS PROCESS\n'
+            self.stderr += "\nDAGOBAH SENT SIGTERM TO THIS PROCESS\n".encode('utf-8')    # by Huxh
         if self.kill_sent:
-            self.stderr += '\nDAGOBAH SENT SIGKILL TO THIS PROCESS\n'
+            self.stderr += '\nDAGOBAH SENT SIGKILL TO THIS PROCESS\n'.encode('utf-8')    # by Huxh
         if self.remote_failure:
             return_code = -1
-            self.stderr += '\nAn error occurred with the remote machine.\n'
+            self.stderr += '\nAn error occurred with the remote machine.\n'.encode('utf-8')    # by Huxh
 
         self.stdout_file = None
         self.stderr_file = None
@@ -903,7 +912,12 @@ class Task(object):
         if not self.process:
             raise DagobahError('task does not have a running process')
         self.terminate_sent = True
-        self.process.terminate()
+        
+        # add taskkill for Windows, by Huxh 
+        if os.name == 'nt':
+            os.system('taskkill /PID %s /T' % self.process.pid)
+        else:
+            self.process.terminate()
 
     def kill(self):
         """ Send SIGKILL to the task's process. """
@@ -915,7 +929,12 @@ class Task(object):
         if not self.process:
             raise DagobahError('task does not have a running process')
         self.kill_sent = True
-        self.process.kill()
+        
+        # add taskkill for Windows, by Huxh 
+        if os.name == 'nt':
+            os.system('taskkill /PID %s /T /F' % self.process.pid)
+        else:
+            self.process.kill()
 
     def head(self, stream='stdout', num_lines=10):
         """ Head a specified stream (stdout or stderr) by num_lines. """
@@ -992,11 +1011,11 @@ class Task(object):
 
     def _head_string(self, in_str, num_lines):
         """ Returns a list of the first num_lines lines from a string. """
-        return in_str.split('\n')[:num_lines]
+        return in_str.split(b'\n')[:num_lines]  # TypeError: a bytes-like object is required, not 'str' by Huxh    
 
     def _tail_string(self, in_str, num_lines):
         """ Returns a list of the last num_lines lines from a string. """
-        return in_str.split('\n')[-1 * num_lines:]
+        return in_str.split(b'\n')[-1 * num_lines:]  # TypeError: a bytes-like object is required, not 'str' by Huxh 
 
     def _head_temp_file(self, temp_file, num_lines):
         """ Returns a list of the first num_lines lines from a temp file. """
@@ -1041,7 +1060,7 @@ class Task(object):
         """ Performs cleanup tasks and notifies Job that the Task finished. """
         logger.debug('Running _task_complete for task {0}'.format(self.name))
         with self.parent_job.completion_lock:
-            self.completed_at = datetime.utcnow()
+            self.completed_at = datetime.utcnow() #utcnow() again? by Huxh kwargs.get('complete_time', None)
             self.successful = kwargs.get('success', None)
             self.parent_job._complete_task(self.name, **kwargs)
 

@@ -19,8 +19,11 @@ def index_route():
 @login_required
 def jobs():
     """ Show information on all known Jobs. """
-    return render_template('jobs.html',
-                           jobs=get_jobs())
+    # jobs is not used in jobs.html
+    # by Huxh
+    # return render_template('jobs.html',
+    #    jobs=get_jobs())
+    return render_template('jobs.html')
 
 
 @app.route('/jobs/import', methods=['POST'])

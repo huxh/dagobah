@@ -1,4 +1,5 @@
 var tasksTableHeadersTemplate = Handlebars.compile($('#tasks-table-headers-template').html());
+var tasksTableBodyTemplate = Handlebars.compile($('#tasks-table-body-template').html());
 var tasksTableResultsTemplate = Handlebars.compile($('#tasks-table-results-template').html());
 var tasksTableCommandsTemplate = Handlebars.compile($('#tasks-table-commands-template').html());
 var tasksTableTimeoutsTemplate = Handlebars.compile($('#tasks-table-timeouts-template').html());
@@ -17,13 +18,13 @@ Handlebars.registerPartial('tasksSoftTimeout', tasksSoftTimeoutTemplate);
 Handlebars.registerPartial('tasksHardTimeout', tasksHardTimeoutTemplate);
 Handlebars.registerPartial('tasksRemoteTarget', tasksRemoteTargetTemplate);
 
-Handlebars.registerHelper('equal', function(lvalue, rvalue, options) {
+Handlebars.registerHelper('equal', function (lvalue, rvalue, options) {
     if (arguments.length < 3)
         throw new Error("Handlebars Helper equal needs 2 parameters");
-    if( lvalue!=rvalue ) {
+    if (lvalue != rvalue) {
         return options.inverse(this);
     } else {
-    return options.fn(this);
+        return options.fn(this);
     }
 });
 
@@ -43,6 +44,24 @@ var fieldTemplateMap = {
     "Remote Target": tasksRemoteTargetTemplate
 };
 
+// use Chinese field by Huxh
+var fieldCNMap = {
+    "步骤": 'name',
+    "操作内容": 'command',
+    "软超时秒": 'soft_timeout',
+    "硬超时秒": 'hard_timeout',
+    "远程主机": 'hostname'
+};
+
+// use Chinese field by Huxh
+var fieldCNTemplateMap = {
+    "步骤": tasksNameTemplate,
+    "操作内容": tasksCommandTemplate,
+    "软超时秒": tasksSoftTimeoutTemplate,
+    "硬超时秒": tasksHardTimeoutTemplate,
+    "远程主机": tasksRemoteTargetTemplate
+};
+
 function runWhenJobLoaded() {
     if (typeof job != 'undefined' && job.loaded === true) {
         resetTasksTable();
@@ -57,7 +76,7 @@ function runWhenJobLoaded() {
 runWhenJobLoaded();
 
 function onTaskDeleteClick() {
-    $(this).parents('[data-task]').each(function() {
+    $(this).parents('[data-task]').each(function () {
         deleteTask($(this).attr('data-task'));
     });
 }
@@ -74,10 +93,10 @@ function onEditTaskClick() {
     td.remove();
 
     if (index === 0) {
-      tr.prepend(editTaskTemplate({ original: original, field: field, knownHosts: knownHosts }));
+        tr.prepend(editTaskTemplate({ original: original, field: field, knownHosts: knownHosts }));
     } else {
-        $(tr).children().each(function() {
-            if ( $(tr).children().index(this) === (index - 1) ) {
+        $(tr).children().each(function () {
+            if ($(tr).children().index(this) === (index - 1)) {
                 $(this).after(editTaskTemplate({
                     original: original,
                     field: field,
@@ -98,8 +117,8 @@ function editTask(taskName, field, newValue) {
         return;
     }
 
-    var postData = {job_name: job.name, task_name: taskName};
-    postData[fieldMap[field]] = newValue;
+    var postData = { job_name: job.name, task_name: taskName };
+    postData[fieldCNMap[field]] = newValue;
 
     $.ajax({
         type: 'POST',
@@ -107,15 +126,15 @@ function editTask(taskName, field, newValue) {
         data: postData,
         dataType: 'json',
         async: true,
-        success: function() {
-            if (fieldMap[field] === 'name') {
+        success: function () {
+            if (fieldCNMap[field] === 'name') {
                 $('tr[data-task="' + taskName + '"]').attr('data-task', newValue);
                 job.renameTask(taskName, newValue);
             }
-            showAlert('table-alert', 'success', 'Task changed successfully.');
+            showAlert('alert', 'success', 'Task changed successfully.');
         },
-        error: function() {
-            showAlert('table-alert', 'error', "There was a problem changing the task's information.");
+        error: function () {
+            showAlert('alert', 'error', "There was a problem changing the task's information.");
         }
     });
 
@@ -134,24 +153,24 @@ function onSaveTaskEditClick() {
 
     var taskName = $(tr).attr('data-task');
 
-    if (original !== null &&  original !== newValue) {
+    if (original !== null && original !== newValue) {
         if (field == "Remote Target" || newValue !== '') {
             editTask(taskName, field, newValue);
         }
     } else {
-        showAlert('table-alert', 'info', 'Task was not changed.');
+        showAlert('alert', 'info', 'Task was not changed.');
         newValue = original;
     }
 
     td.remove();
 
-    var template = fieldTemplateMap[field];
+    var template = fieldCNTemplateMap[field];
 
     if (index === 0) {
         tr.prepend(template({ text: newValue }));
     } else {
-        $(tr).children().each(function() {
-            if ( $(tr).children().index(this) === (index - 1) ) {
+        $(tr).children().each(function () {
+            if ($(tr).children().index(this) === (index - 1)) {
                 $(this).after(template({ text: newValue }));
             }
         });
@@ -193,14 +212,14 @@ function deleteDependency(fromTaskName, toTaskName) {
         },
         dataType: 'json',
         async: true,
-        success: function() {
+        success: function () {
             job.removeDependencyFromGraph(fromTaskName, toTaskName);
-            showAlert('graph-alert', 'success', 'Dependency from ' +
-                    fromTaskName + ' to ' + toTaskName +
-                    ' was successfully removed.');
+            showAlert('alert', 'success', 'Dependency from ' +
+                fromTaskName + ' to ' + toTaskName +
+                ' was successfully removed.');
         },
-        error: function() {
-            showAlert('graph-alert', 'error', 'There was an error removing this dependency.');
+        error: function () {
+            showAlert('alert', 'error', 'There was an error removing this dependency.');
         }
     });
 
@@ -213,7 +232,7 @@ function deleteTask(taskName, alertId) {
     }
 
     if (typeof alertId === 'undefined') {
-        alertId = 'table-alert';
+        alertId = 'alert';
     }
 
     $.ajax({
@@ -225,15 +244,15 @@ function deleteTask(taskName, alertId) {
         },
         dataType: 'json',
         async: true,
-        success: function() {
-            job.update(function() {
+        success: function () {
+            job.update(function () {
                 resetTasksTable();
                 job.removeTaskFromGraph(taskName);
             });
             showAlert(alertId, 'success', 'Task ' + taskName + ' deleted.');
         },
-        error: function() {
-            showAlert(alertId, 'error', 'There was an error deleting the task.');
+        error: function () {
+            (alertId, 'error', 'There was an error deleting the task.');
         },
         dataType: 'json'
     });
@@ -244,20 +263,41 @@ $('#remote_checkbox').click(function () {
     $("#target_hosts").toggle(this.checked);
 });
 
-$('#add-task').click(function() {
+$('#mins_checkbox').click(function () {
+    $("#sched_mins").toggle(this.checked);
+
+});
+
+$('#hour_checkbox').click(function () {
+    $("#sched_hour").toggle(this.checked);
+});
+
+$('#days_checkbox').click(function () {
+    $("#sched_days").toggle(this.checked);
+});
+
+$('#mons_checkbox').click(function () {
+    $("#sched_mons").toggle(this.checked);
+});
+
+$('#wday_checkbox').click(function () {
+    $("#sched_wday").toggle(this.checked);
+});
+
+$('#add-task').click(function () {
 
     var newName = $('#new-task-name').val();
     var newCommand = $('#new-task-command').val();
-    if ($('#remote_checkbox').is(':checked')){
+    if ($('#remote_checkbox').is(':checked')) {
         var newTargetHostId = $('#target-hosts-dropdown').val();
     }
 
     if (newName === null || newName === '') {
-        showAlert('new-alert', 'error', 'Please enter a name for the new task.');
+        showAlert('alert', 'error', 'Please enter a name for the new task.');
         return;
     }
     if (newCommand === null || newCommand === '') {
-        showAlert('new-alert', 'error', 'Please enter a command for the new task.');
+        showAlert('alert', 'error', 'Please enter a command for the new task.');
         return;
     }
 
@@ -291,9 +331,9 @@ function addNewTask(newName, newCommand, newTargetHostId) {
         url: $SCRIPT_ROOT + '/api/add_task_to_job',
         data: data,
         dataType: 'json',
-        success: function() {
-            showAlert('new-alert', 'success', 'Task added to job.');
-            job.update(function() {
+        success: function () {
+            showAlert('alert', 'success', 'Task added to job.');
+            job.update(function () {
                 job.addTaskToGraph(newName);
                 resetTasksTable();
             });
@@ -301,37 +341,40 @@ function addNewTask(newName, newCommand, newTargetHostId) {
             $('#new-task-command').val('');
             $('#target-hosts-dropdown').val('');
         },
-        error: function() {
-            showAlert('new-alert', 'error', 'There was an error adding the task to this job.');
+        error: function () {
+            showAlert('alert', 'error', 'There was an error adding the task to this job.');
         },
         async: true
     });
 
 }
 
-function resetTasksTable(tableMode) {
+function resetTasksTable() {
 
     if (!job.loaded) {
         return;
     }
 
-    if (typeof tableMode === 'undefined') {
-        tableMode = getTableMode();
-    }
+    // if (typeof tableMode === 'undefined') {
+    //     tableMode = getTableMode();
+    // }
 
     $('#tasks-headers').empty();
     $('#tasks-body').empty();
 
-    var headers=[];
-    if (tableMode === 'results') {
-        headers = ['Task', 'Started', 'Completed', 'Result', ''];
-    } else if (tableMode === 'commands') {
-        headers = ['Task', 'Command', ''];
-    } else if (tableMode === 'timeouts') {
-        headers = ['Task', 'Soft Timeout', 'Hard Timeout', ''];
-    } else if (tableMode === 'remote') {
-        headers = ['Task', 'Remote Target', ''];
-    }
+    var headers = [];
+    headers = ['步骤', '操作内容', '运行结果', '启动时刻', '完成时刻', '软超时秒', '硬超时秒', /*'远程主机',*/ ''];
+
+    // if (tableMode === 'results') {
+    //     headers = ['步骤', '启动时刻', '完成时刻', '运行结果', ''];
+
+    // } else if (tableMode === 'commands') {
+    //     headers = ['步骤', '操作内容', ''];
+    // } else if (tableMode === 'timeouts') {
+    //     headers = ['步骤', '软超时(秒)', '硬超时(秒)', ''];
+    // } else if (tableMode === 'remote') {
+    //     headers = ['步骤', '远程主机', ''];
+    // }
 
     for (var i = 0; i < headers.length; i++) {
         $('#tasks-headers').append(
@@ -344,35 +387,42 @@ function resetTasksTable(tableMode) {
     for (var i = 0; i < job.tasks.length; i++) {
         var thisTask = job.tasks[i];
 
-        if (tableMode === 'results') {
-            $('#tasks-body').append(
-                tasksTableResultsTemplate({
-                    taskName: thisTask.name,
-                    taskURL: $SCRIPT_ROOT + '/job/' + job.id + '/' + thisTask.name
-                })
-            );
-        } else if (tableMode === 'commands') {
-            $('#tasks-body').append(
-                    tasksTableCommandsTemplate({
-                    taskName: thisTask.name,
-                    taskURL: $SCRIPT_ROOT + '/job/' + job.id + '/' + thisTask.name
-                })
-            );
-        } else if (tableMode === 'timeouts') {
-            $('#tasks-body').append(
-                tasksTableTimeoutsTemplate({
-                    taskName: thisTask.name,
-                    taskURL: $SCRIPT_ROOT + '/job/' + job.id + '/' + thisTask.name
-                })
-            );
-        } else if (tableMode === 'remote') {
-            $('#tasks-body').append(
-                    tasksTableRemoteTemplate({
-                    taskName: thisTask.name,
-                    taskURL: $SCRIPT_ROOT + '/job/' + job.id + '/' + thisTask.name
-                })
-            );
-        }
+        $('#tasks-body').append(
+            tasksTableBodyTemplate({
+                taskName: thisTask.name,
+                taskURL: $SCRIPT_ROOT + '/job/' + job.id + '/' + thisTask.name
+            })
+        );
+
+        // if (tableMode === 'results') {
+        //     $('#tasks-body').append(
+        //         tasksTableResultsTemplate({
+        //             taskName: thisTask.name,
+        //             taskURL: $SCRIPT_ROOT + '/job/' + job.id + '/' + thisTask.name
+        //         })
+        //     );
+        // } else if (tableMode === 'commands') {
+        //     $('#tasks-body').append(
+        //             tasksTableCommandsTemplate({
+        //             taskName: thisTask.name,
+        //             taskURL: $SCRIPT_ROOT + '/job/' + job.id + '/' + thisTask.name
+        //         })
+        //     );
+        // } else if (tableMode === 'timeouts') {
+        //     $('#tasks-body').append(
+        //         tasksTableTimeoutsTemplate({
+        //             taskName: thisTask.name,
+        //             taskURL: $SCRIPT_ROOT + '/job/' + job.id + '/' + thisTask.name
+        //         })
+        //     );
+        // } else if (tableMode === 'remote') {
+        //     $('#tasks-body').append(
+        //             tasksTableRemoteTemplate({
+        //             taskName: thisTask.name,
+        //             taskURL: $SCRIPT_ROOT + '/job/' + job.id + '/' + thisTask.name
+        //         })
+        //     );
+        // }
 
     }
 
@@ -381,13 +431,13 @@ function resetTasksTable(tableMode) {
 
 }
 
-function getTableMode() {
-    return $('#table-toggle').children('.active').val();
-}
+// function getTableMode() {
+//     return $('#table-toggle').children('.active').val();
+// }
 
-$('#table-toggle').children().click(function() {
-    resetTasksTable($(this).val());
-});
+// $('#table-toggle').children().click(function() {
+//     resetTasksTable($(this).val());
+// });
 
 function updateTasksTable() {
 
@@ -395,7 +445,7 @@ function updateTasksTable() {
         return;
     }
 
-    $('#tasks-body').children().each(function() {
+    $('#tasks-body').children().each(function () {
 
         var taskName = $(this).attr('data-task');
         for (var i = 0; i < job.tasks.length; i++) {
@@ -405,7 +455,7 @@ function updateTasksTable() {
             }
         }
 
-        $(this).find('[data-attr]').each(function() {
+        $(this).find('[data-attr]').each(function () {
 
             var attr = $(this).attr('data-attr');
             var transform = $(this).attr('data-transform');
@@ -460,8 +510,10 @@ function setControlButtonStates() {
     if (job.status == 'waiting') {
         $('#terminate-job').prop('disabled', true);
         $('#kill-job').prop('disabled', true);
+        $('#retry-job').prop('disabled', true);        // by Huxh
     } else if (job.status == 'running') {
         $('#start-job').prop('disabled', true);
+        $('#retry-job').prop('disabled', true);        // by Huxh
     } else if (job.status == 'failed') {
         $('#terminate-job').prop('disabled', true);
         $('#kill-job').prop('disabled', true);
@@ -475,13 +527,13 @@ function updateJobNextRun() {
     }
 
     if (job.next_run === null) {
-        $('#next-run').val('Not scheduled');
+        $('#next-run').text('未定时');
     } else {
-        $('#next-run').val(moment.utc(job.next_run).local().format('LLL'));
+        $('#next-run').text(moment.utc(job.next_run).local().format('LLL'));
     }
 }
 
-$('#save-notes').click(function() {
+$('.save-notes').click(function () {
     var notes = $('#job-notes').val();
     updateNotes(notes);
 });
@@ -501,11 +553,11 @@ function updateNotes(newNotes) {
         url: $SCRIPT_ROOT + '/api/update_job_notes',
         data: data,
         dataType: 'json',
-        success: function() {
-            showAlert('notes-alert', 'success', 'Notes updated.');
+        success: function () {
+            showAlert('alert', 'success', 'Notes updated.');
         },
-        error: function() {
-            showAlert('notes-alert', 'error', 'There was an error updating notes.');
+        error: function () {
+            showAlert('alert', 'error', 'There was an error updating notes.');
         },
         async: true
     });
@@ -527,28 +579,68 @@ function updateSchedule(jobName, cronSchedule) {
         dataType: 'json',
         success: function () {
             successMsg = cronSchedule === "" ? 'Job unscheduled successfully' : 'Job scheduled successfully';
-            showAlert('schedule-alert', 'success', successMsg);
+            showAlert('alert', 'success', successMsg);
             updateJobNextRun();
         },
-        error: function() {
+        error: function () {
             errorMsg = cronSchedule === "" ? 'Failed to unschedule job' : 'Failed to schedule job';
-            showAlert('schedule-alert', 'error', errorMsg);
+            showAlert('alert', 'error', errorMsg);
         },
         async: true
     });
 
 }
 
-$('#save-schedule').click(function() {
-  updateSchedule(job.name, $('#cron-schedule').val());
+$('#save-schedule').click(function () {
+    if ($('#spl_mode').prop("class")=="active"){
+        var cron_schedule = '';
+        if ($('#mins_checkbox').is(':checked')) {
+            cron_schedule += $('#sched_mins').val() + ' ';
+        }
+        else {
+            cron_schedule += '* ';
+        }
+        if ($('#hour_checkbox').is(':checked')) {
+            cron_schedule += $('#sched_hour').val() + ' ';
+        }
+        else {
+            cron_schedule += '* ';
+        }
+        if ($('#days_checkbox').is(':checked')) {
+            cron_schedule += $('#sched_days').val() + ' ';
+        }
+        else {
+            cron_schedule += '* ';
+        }
+        if ($('#mons_checkbox').is(':checked')) {
+            cron_schedule += $('#sched_mons').val() + ' ';
+        }
+        else {
+            cron_schedule += '* ';
+        }
+        if ($('#wday_checkbox').is(':checked')) {
+            cron_schedule += $('#sched_wday').val() + ' ';
+        }
+        else {
+            cron_schedule += '* ';
+        }
+        $('#cron-schedule').val(cron_schedule);
+    }
+
+    updateSchedule(job.name, $('#cron-schedule').val());
 });
 
-$('#clear-schedule').click(function() {
-  $('#cron-schedule').val('None');
-  updateSchedule(job.name, '');
+$('#clear-schedule').click(function () {
+    // $('#mins_checkbox').prop("checked",false);
+    // $('#hour_checkbox').prop("checked",false);
+    // $('#days_checkbox').prop("checked",false);
+    // $('#mons_checkbox').prop("checked",false);
+    // $('#wday_checkbox').prop("checked",false);
+    $('#cron-schedule').val('');
+    updateSchedule(job.name, '');
 });
 
-$('#start-job').click(function() {
+$('#start-job').click(function () {
 
     if (!job.loaded) {
         return;
@@ -557,20 +649,20 @@ $('#start-job').click(function() {
     $.ajax({
         type: 'POST',
         url: $SCRIPT_ROOT + '/api/start_job',
-        data: {job_name: job.name},
+        data: { job_name: job.name },
         dataType: 'json',
-        success: function() {
-            showAlert('state-alert', 'success', 'Job started');
+        success: function () {
+            showAlert('alert', 'success', '任务启动成功');
         },
-        error: function() {
-            showAlert('state-alert', 'error', 'Unable to start job');
+        error: function () {
+            showAlert('alert', 'error', '任务启动失败');
         },
         async: true
     });
 
 });
 
-$('#retry-job').click(function() {
+$('#retry-job').click(function () {
 
     if (!job.loaded) {
         return;
@@ -579,20 +671,20 @@ $('#retry-job').click(function() {
     $.ajax({
         type: 'POST',
         url: $SCRIPT_ROOT + '/api/retry_job',
-        data: {job_name: job.name},
+        data: { job_name: job.name },
         dataType: 'json',
-        success: function() {
-            showAlert('state-alert', 'success', 'Retrying failed tasks');
+        success: function () {
+            showAlert('alert', 'success', 'Retrying failed tasks');
         },
-        error: function() {
-            showAlert('state-alert', 'error', 'Unable to retry failed tasks');
+        error: function () {
+            showAlert('alert', 'error', 'Unable to retry failed tasks');
         },
         async: true
     });
 
 });
 
-$('#terminate-job').click(function() {
+$('#terminate-job').click(function () {
 
     if (!job.loaded) {
         return;
@@ -601,20 +693,20 @@ $('#terminate-job').click(function() {
     $.ajax({
         type: 'POST',
         url: $SCRIPT_ROOT + '/api/terminate_all_tasks',
-        data: {job_name: job.name},
+        data: { job_name: job.name },
         dataType: 'json',
-        success: function() {
-            showAlert('state-alert', 'success', 'All running tasks terminated');
+        success: function () {
+            showAlert('alert', 'success', 'All running tasks terminated');
         },
-        error: function() {
-            showAlert('state-alert', 'error', 'Unable to terminate some or all tasks');
+        error: function () {
+            showAlert('alert', 'error', 'Unable to terminate some or all tasks');
         },
         async: true
     });
 
 });
 
-$('#kill-job').click(function() {
+$('#kill-job').click(function () {
 
     if (!job.loaded) {
         return;
@@ -623,19 +715,19 @@ $('#kill-job').click(function() {
     $.ajax({
         type: 'POST',
         url: $SCRIPT_ROOT + '/api/kill_all_tasks',
-        data: {job_name: job.name},
+        data: { job_name: job.name },
         dataType: 'json',
-        success: function() {
-            showAlert('state-alert', 'success', 'All running tasks killed');
+        success: function () {
+            showAlert('alert', 'success', 'All running tasks killed');
         },
-        error: function() {
-            showAlert('state-alert', 'error', 'Unable to kill some or all tasks');
+        error: function () {
+            showAlert('alert', 'error', 'Unable to kill some or all tasks');
         },
         async: true
     });
 
 });
 
-$('.toggle-help').click(function() {
+$('.toggle-help').click(function () {
     $('.chart-help').toggleClass('hidden');
 });

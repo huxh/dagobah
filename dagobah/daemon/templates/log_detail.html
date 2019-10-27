@@ -14,14 +14,14 @@
 {% endblock head %}
 
 {% block navbar_current %}
-<li><a href='{{ url_for('job_detail', job_id=job.job_id) }}'>Job: {{ job.name }}</a></li>
-<li><a href='#'>Task Detail: {{ task_name }}</a></li>
+<li><a href='{{ url_for('job_detail', job_id=job.job_id) }}'>任务: {{ job.name }}</a></li>
+<li><a href='#'>步骤: {{ task_name }}</a></li>
 {% endblock navbar_current %}
 
 {% block content %}
 
 <div class='page-header'>
-  <h3 id='header'>Run History: {{ task_name }}</h3>
+  <h3 id='header'>运行历史: {{ task_name }}</h3>
   <h3 id='task-status' class='right'></h3>
 </div>
 
@@ -29,10 +29,10 @@
   <div class='span12'>  
 
     <div class='log-controls'>
-      <button id='stdout' class='btn btn-sequence btn-primary'>Stdout</button>
-      <button id='stderr' class='btn btn-sequence btn-primary'>Stderr</button>
+      <button id='stdout' class='btn btn-sequence btn-primary'>标准输出</button>
+      <button id='stderr' class='btn btn-sequence btn-primary'>标准错误</button>
 
-      <span id='log-type' class='right-header'>Stdout</span>
+      <span id='log-type' class='right-header'>标准输出</span>
     </div>
 
     <textarea id='log-detail'></textarea>

@@ -16,6 +16,8 @@ sdist
 develop-eggs
 .installed.cfg
 lib64
+notes
+.vscode
 
 # Installer logs
 pip-log.txt
@@ -35,6 +37,12 @@ nosetests.xml
 
 # Virtualenv
 venv
+py35
+py27
 
 # Vim packages
 *.ropeproject
+coll_dagobah.json
+coll_job.json
+coll_log.json
+.stignore

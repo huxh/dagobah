@@ -2,21 +2,42 @@
 
 {% block head %}
 {{ super() }}
-<link rel="stylesheet" href="/static/css/job_detail.css"></link>
-<link rel="stylesheet" href="/static/css/job_graph.css"></link>
+<link rel="stylesheet" href="/static/css/job_detail.css">
+</link>
+<link rel="stylesheet" href="/static/css/job_graph.css">
+</link>
 
 <script>
-    var jobName = '{{ job.name }}';
-    var knownHosts = {{ hosts|tojson|safe }};
+  var jobName = '{{ job.name }}';
+  var knownHosts = {{ hosts| tojson | safe }};
 </script>
 
 {% raw %}
 
-  <script id='tasks-table-headers-template' type="text/x-handlebars-template">
+<script id='tasks-table-headers-template' type="text/x-handlebars-template">
     <th>{{ headerName }}</th>
   </script>
 
-  <script id="tasks-table-results-template" type="text/x-handlebars-template">
+<script id="tasks-table-body-template" type="text/x-handlebars-template">
+    <tr data-task='{{ taskName }}'>
+      {{> tasksName }}
+      {{> tasksCommand }}
+      <td>
+          <span data-attr='success' data-transform='class-success'></span>
+        </td>
+      <td data-attr='started_at' data-transform='datetime'></td>
+      <td data-attr='completed_at' data-transform='datetime'></td>
+      {{> tasksSoftTimeout }}
+      {{> tasksHardTimeout }}
+      <!-- {{> tasksRemoteTarget }}    -->
+      <td>
+        <button class='btn btn-primary' onclick="window.location.href = '{{ taskURL }}';">查看</button>
+        <button class='btn btn-danger task-delete' onclick="return false;"><i class='icon-trash'></i> </button>
+      </td>
+    </tr>
+  </script>
+
+<script id="tasks-table-results-template" type="text/x-handlebars-template">
     <tr data-task='{{ taskName }}'>
       {{> tasksName }}
       <td data-attr='started_at' data-transform='datetime'></td>
@@ -25,79 +46,79 @@
         <span data-attr='success' data-transform='class-success'></span>
       </td>
       <td>
-        <button class='btn btn-primary' onclick="window.location.href = '{{ taskURL }}';">View Task</button>
+        <button class='btn btn-primary' onclick="window.location.href = '{{ taskURL }}';">检查操作</button>
         <button class='btn btn-danger task-delete' onclick="return false;"><i class='icon-trash'></i> </button>
       </td>
     </tr>
   </script>
 
-  <script id="tasks-table-commands-template" type="text/x-handlebars-template">
+<script id="tasks-table-commands-template" type="text/x-handlebars-template">
     <tr data-task='{{ taskName }}'>
       {{> tasksName }}
       {{> tasksCommand }}
       <td>
-        <button class='btn btn-primary' onclick="window.location.href = '{{ taskURL }}';">View Task</button>
+        <button class='btn btn-primary' onclick="window.location.href = '{{ taskURL }}';">查看</button>
           <button class='btn btn-danger task-delete' onclick="return false;"><i class='icon-trash'></i></button>
       </td>
     </tr>
   </script>
 
-  <script id="tasks-table-timeouts-template" type="text/x-handlebars-template">
+<script id="tasks-table-timeouts-template" type="text/x-handlebars-template">
     <tr data-task='{{ taskName }}'>
       {{> tasksName }}
       {{> tasksSoftTimeout }}
       {{> tasksHardTimeout }}
       <td>
-        <button class='btn btn-primary' onclick="window.location.href = '{{ taskURL }}';">View Task</button>
+        <button class='btn btn-primary' onclick="window.location.href = '{{ taskURL }}';">检查操作</button>
           <button class='btn btn-danger task-delete' onclick="return false;"><i class='icon-trash'></i></button>
       </td>
     </tr>
   </script>
 
-  <script id="tasks-table-remote-template" type="text/x-handlebars-template">
+<script id="tasks-table-remote-template" type="text/x-handlebars-template">
     <tr data-task='{{ taskName }}'>
       {{> tasksName }}
       {{> tasksRemoteTarget }}
       <td>
-        <button class='btn btn-primary' onclick="window.location.href = '{{ taskURL }}';">View Task</button>
+        <button class='btn btn-primary' onclick="window.location.href = '{{ taskURL }}';">查看</button>
           <button class='btn btn-danger task-delete' onclick="return false;"><i class='icon-trash'></i></button>
       </td>
     </tr>
   </script>
 
-  <script id="tasks-data-name-template" type="text/x-handlebars-template">
+<script id="tasks-data-name-template" type="text/x-handlebars-template">
     <td data-attr='name'>
       {{#if text}}{{text}}{{/if}}
       <i class='icon-pencil edit-task'></i>
     </td>
   </script>
 
-  <script id="tasks-data-command-template" type="text/x-handlebars-template">
+<script id="tasks-data-command-template" type="text/x-handlebars-template">
     <td data-attr='command'>
       {{#if text}}{{text}}{{/if}}
       <i class='icon-pencil edit-task'></i>
     </td>
   </script>
 
-  <script id="tasks-data-soft-timeout-template" type="text/x-handlebars-template">
+<script id="tasks-data-soft-timeout-template" type="text/x-handlebars-template">
     <td data-attr='soft_timeout'>
       {{text}}<i class='icon-pencil edit-task'></i>
     </td>
   </script>
 
-  <script id="tasks-data-hard-timeout-template" type="text/x-handlebars-template">
+<script id="tasks-data-hard-timeout-template" type="text/x-handlebars-template">
     <td data-attr='hard_timeout'>
       {{text}}<i class='icon-pencil edit-task'></i>
     </td>
   </script>
 
-  <script id="tasks-data-remote-target-template" type="text/x-handlebars-template">
+<script id="tasks-data-remote-target-template" type="text/x-handlebars-template">
     <td data-attr='hostname'>
       {{text}}<i class='icon-pencil edit-task'></i>
     </td>
   </script>
 
-  <script id="tasks-edit-template" type="text/x-handlebars-template">
+<script id="tasks-edit-template" type="text/x-handlebars-template">
     <td>
       {{#equal field "Remote Target"}}
         <select id='target-hosts-dropdown' name='targethosts' data-field='{{ field }}'
@@ -112,7 +133,7 @@
              data-original='{{ original }}' value='{{ original }}'>
       </input>
       {{/equal}}
-      <button class='btn btn-success save-task-edit'>Save</button>
+      <button class='btn btn-success save-task-edit'>保存</button>
     </td>
   </script>
 
@@ -121,164 +142,247 @@
 {% endblock head %}
 
 {% block navbar_current %}
-<li><a href='#'>Job Detail: {{ job.name }}</a></li>
+<li><a href='#'>当前任务: {{ job.name }}</a></li>
 {% endblock navbar_current %}
 
 {% block content %}
-<div class='page-header'>
-  <h3>Job Detail: {{ job.name }}</h3>
-  <h3 id='job-status' class='right'></h3>
+<div class='page-alert-fixed'>
+  <div id='alert' class='alert hidden'>
+  </div>
+</div>
+
+<div class='page-header-fixed'>
+  <div class='row-fluid'>
+    <div class='span4'>
+      <h5><span class='label label-info'>任务名称</span> {{ job.name }}</h5>
+    </div>
+
+    <div class='span6'>
+      <h5><span class='label label-info'>下次运行</span> <span id='next-run'></span></h5>
+    </div>
+    <div class='span2'>
+      <h5><span class='label label-info'>运行状态</span> <span id='job-status'></span></h5>
+    </div>
+
+  </div>
+
+  <!-- <h3 id='job-status' class='right'></h3> -->
+  <h5 class='label label-info'>任务说明</h5>
+
+  <textarea id='job-notes' rows=1 maxlength=45 title='修改后记得点击右侧图标确认' class='span11 mynotes'>{{ job.notes }}</textarea>
+  <i class='icon icon-ok-sign save-notes'></i>
+  <!-- <button class='span1' id='save-notes' class='btn btn-success' onclick='return false;'>修改</button> -->
 </div>
 
 <div id='fallback-modal' class='modal hide'>
   <div class='modal-header'>
-    <h3>Something's Wrong!</h3>
+    <h3>故障报警！</h3>
   </div>
   <div class='modal-body'>
-    <p>It looks like you've either lost your connection to the server or something has produced an error. If you're still connected to the server, you might want to check your Dagobahd logs to see if you can identify the problem.</p>
+    <p>无法连接任务调度服务器。请检查是否网络连接故障，或检查日志以确认是否发生软件故障。</p>
   </div>
   <div class='modal-footer'>
-    <button class='btn btn-primary' onclick='window.location.href = location.origin;'>Back to Jobs Overview</button>
-    <button class='btn btn-success' data-dismiss='modal'>Try to Reconnect</button>
+    <button class='btn btn-primary' onclick='window.location.href = location.origin;'>返回任务列表</button>
+    <button class='btn btn-success' data-dismiss='modal'>尝试重新连接服务器</button>
   </div>
 </div>
 
-<div id='graph-alert' class='alert hidden'>
-</div>
+<div class="panelarea">
+  <div class='row-fluid'>
 
-<div class='relative-holder'>
-  <i class='icon icon-info-sign toggle-help'></i>
-</div>
+    <div class="span10">
+      <ul id="monitor-tab" class="nav nav-tabs">
+        <li class="active"><a href="#dag-graph" data-toggle="tab">DAG图</a></li>
+        <li><a href="#task-tab" data-toggle="tab">步骤表</a></li>
+      </ul>
+      <div id="monitor-tab-content" class="tab-content">
+        <div class="tab-pane fade in active" id="dag-graph">
+          <div class='job-graph'>
+          </div>
 
-<div class='chart-help hidden'>
-  <h4>Manipulating the DAG Directly</h4>
-  <ul>
-    <li>To add a new task, scroll down below the graph to the "Add Task" section.</li>
-    <li>To add a new dependency, just click and drag on the graph. Start at the independent node, and drag to the dependent node. In other words, if task A needs to finish before task B can run, then drag a line from task A to task B.</li>
-    <li>To delete a task or dependency, first click on it to select it (it will become dashed). Then hit "d" on your keyboard (your mouse needs to be over the graph for this to work). You can also delete tasks in the table below.</li>
-  </ul>
-</div>
+          <div class='relative-holder'>
+            <i class='icon icon-info-sign toggle-help'></i>
+          </div>
 
-<div class='job-graph'>
-</div>
-
-<div class='row' id='config'>
-  <div class='span6'>
-    <h3>Job Scheduling</h3>
-
-    <div id='schedule-alert' class='alert hidden'>
-    </div>
-
-    <form id='schedule' class='form form-horizontal'>
-
-      <div class='control-group'>
-        <label class='control-label' for='cron-schedule'>Cron Schedule String<br />(M H DoM Mon DoW)</label>
-        <div class='controls'>
-          <input id='cron-schedule' type='text' class='input' value='{{ job.cron_schedule }}'></input>
+          <div class='chart-help hidden'>
+            <h4>如何操作DAG图？</h4>
+            <ul>
+              <li>击：鼠标任何键单击图中的实体（方框代表步骤，连线代表依赖关系）将其选中，单击其他区域震图。左键双击图中任何区域将放大整图，“shift”+鼠标左键双击则缩小。</li>
+              <li>拖：鼠标点击方框拖拽将生成指向它后续步骤的连线，点击方框之外区域将移动整幅图。</li>
+              <li>滚：鼠标滚轮操作将缩放整图。</li>
+              <li>键：按下“D”将删除当前选中的方框或连线。</li>
+            </ul>
+            <h4>如何为任务增/删步骤？</h4>
+            <ul>
+              <li>增：可以在右侧“新增步骤”部分直接输入步骤名称和操作命令并提交。</li>
+              <li>删：可以在“DAG图”部分点击选中对应的步骤方框，然后按下键盘“D”键直接删除；</li>
+              <li>删：也可以在“步骤表”部分点击对应的步骤所在列末尾的红色按钮（垃圾桶图标）直接删除。</li>
+            </ul>
+            <h4>如何为步骤增/删依赖关系？</h4>
+            <ul>
+              <li>增：可以在“DAG图”部分通过点击和拖拽方式，添加步骤间的依赖关系。例，若步骤A结束后执行步骤B，则点击步骤A并拖拽到步骤B，将生成一条从方框A指向方框B的有向连线。</li>
+              <li>删：可以在“DAG图”部分点击选中对应的关系连线，然后按下键盘“D”键直接删除；</li>
+              <li>注：删除步骤也将同时删除与它相关的所有依赖关系。</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="task-tab">
+          <div class='monitor'>
+            <table id='tasks-table' class='table table-striped'
+              style="table-layout:fixed;word-break:break-all; word-wrap:break-all;">
+              <thead id='tasks-headers'>
+                <!-- <th class='span2'>步骤</th>
+                <th class='span2'>操作内容</th>
+                <th class='span2'>结果</th>
+                <th class='span2'>启动时刻</th>
+                <th class='span2'>结束时刻</th>
+                <th class='span2'>软超时秒</th>
+                <th class='span2'>硬超时秒</th> -->
+                <!-- <th class='span1'>远程主机</th> -->
+              </thead>
+              <tbody id='tasks-body'>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
+    </div>
 
-      <div class='control-group'>
-        <label class='control-label' for='next-run'>Next Scheduled Run<br />(local time)</label>
-        <div class='controls'>
-          <input id='next-run' type='text' class='input' disabled></input>
+    <div class="span2 parent-height">
+      <ul id="control-tab" class="nav nav-pills text-center nav-stacked">
+        <li class="active"><a href="#start-stop" data-toggle="tab">启停控制</a></li>
+        <li><a href="#new-task" data-toggle="tab">新增步骤</a></li>
+        <li><a href="#set-sched" data-toggle="tab">定时调度</a></li>
+      </ul>
+      <div id="control-tab-content" class="tab-content add-border">
+        <div class="tab-pane fade in active" id="start-stop">
+          <button id='start-job' class='btn btn-sequence btn-success center ssbutton'> 从头启动任务</button>
+          <button id='retry-job' class='btn btn-sequence btn-info  center ssbutton'>断点继续执行</button>
+          <button id='terminate-job' class='btn btn-sequence btn-warning center ssbutton'>中止当前步骤</button>
+          <button id='kill-job' class='btn btn-sequence btn-danger center ssbutton'>结束当前步骤</button>
         </div>
+        <div class="tab-pane fade" id="new-task">
+          <form class='form'>
+            <label>步骤名称</label>
+            <input id='new-task-name' class='input-large span12 center' type='text' placeholder='步骤名称'></input>
+
+            <label class="checkbox hidden">
+              <input type="checkbox" value="remote" id="remote_checkbox"> 是否远程操作
+            </label>
+            <div id="target_hosts" style="display: none;">
+              <label>远程主机地址:</label>
+              <select id="target-hosts-dropdown" name="target_hosts">
+                {% for host in hosts %}
+                <option value="{{ host }}">{{ host }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <label>操作命令</label>
+            <textarea id='new-task-command' rows="3" class='span12' placeholder='该步骤执行的命令'></textarea>
+
+            <br />
+            <button id='add-task' class='btn btn-success center' onclick='return false;'>提交</button>
+
+          </form>
+        </div>
+        <div class="tab-pane fade" id="set-sched">
+          <ul id="sched-tab" class="nav nav-tabs text-center">
+            <li id="spl_mode" class="active"><a href="#spl-mode" data-toggle="tab">简单<br />Cron</a></li>
+            <li><a href="#diy-mode" data-toggle="tab">自由<br />Cron</a></li>
+          </ul>
+          <div id="sched-tab-content" class="tab-content add-border">
+            <div class="tab-pane fade in active" id="spl-mode">
+              <form id='timer_cbs'>
+                <div class='form-inline'>
+                  <label class="checkbox">
+                    <input type="checkbox" id="mins_checkbox" checked='checked'> 分钟
+                  </label>
+                  <input type="number" min='0' max='59' id="sched_mins" value='0' class='span6'>
+                </div>
+
+                <div class='form-inline'>
+                  <label class="checkbox">
+                    <input type="checkbox" id="hour_checkbox" checked='checked'> 小时
+                  </label>
+                  <input type="number" min='0' max='23' id="sched_hour" value='0' class='span6'>
+                </div>
+
+                <div class='form-inline'>
+                  <label class="checkbox">
+                    <input type="checkbox" id="days_checkbox" checked='checked'> 日期
+                  </label>
+                  <input type="number" min='0' max='31' id="sched_days" value='0' class='span6'>
+                </div>
+
+                <div class='form-inline'>
+                  <label class="checkbox">
+                    <input type="checkbox" id="mons_checkbox" checked='checked'> 月份
+                  </label>
+                  <input type="number" min='1' max='12' id="sched_mons" value='1' class='span6'>
+                </div>
+
+                <div class='form-inline'>
+                  <label class="checkbox">
+                    <input type="checkbox" id="wday_checkbox" checked='checked'> 周几
+                  </label>
+                  <input type="number" min='0' max='6' id="sched_wday" value='0' class='span6'>
+                </div>
+              </form>
+            </div>
+
+            <div class="tab-pane fade in" id="diy-mode">
+              <!-- <label>
+                <h5>"分 时 日 月 周几"</h5>
+              </label> -->
+              <label>
+                <h5> 分：[0~59]</h5>
+              </label>
+              <label>
+                <h5> 时：[0~23]</h5>
+              </label>
+              <label>
+                <h5> 日：[1~31]</h5>
+              </label>
+              <label>
+                <h5> 月：[1~12]</h5>
+              </label>
+              <label>
+                <h5>周几：[1~7]</h5>
+              </label>
+              <label>
+                <h5>星号*：任何时间值</h5>
+              </label>
+              <label>
+                <h5>逗号 ,：多个时间值</h5>
+              </label>
+              <label>
+                <h5>减号 -：一段时间值</h5>
+              </label>
+              <label>
+                <h5>斜线 /：每隔时间值</h5>
+              </label>
+              <input id='cron-schedule' type='text' class='input span12' placeholder='分 时 日 月 周'
+                value='{{ job.cron_schedule }}'></input>
+            </div>
+            <div class='center'>
+              <button id='save-schedule' class='btn btn-sequence btn-success' onclick='return false;'>保存</button>
+              <button id='clear-schedule' class='btn btn-sequence btn-warning' onclick='return false;'>取消</button>
+            </div>
+
+
+          </div>
+        </div>
+
       </div>
 
-      <div class='control-group'>
-          <div class='controls'>
-              <button id='save-schedule' class='btn btn-sequence btn-success' onclick='return false;'>Save</button>
-              <button id='clear-schedule' class='btn btn-sequence btn-warning' onclick='return false;'>Unschedule</button>
-        </div>
-      </div>
-
-    </form>
-
-  </div>
-  <div class='span6'>
-    <h3>Job State Control</h3>
-
-    <div id='state-alert' class='alert hidden'>
     </div>
-
-    <button id='start-job' class='btn btn-sequence btn-success'>Start Job from Beginning</button>
-    <button id='retry-job' class='btn btn-sequence btn-success'>Retry Failed Tasks</button>
-    <br /><br />
-    <button id='terminate-job' class='btn btn-sequence btn-warning'>Terminate Running Tasks</button>
-    <button id='kill-job' class='btn btn-sequence btn-danger'>Kill Running Tasks</button>
   </div>
-</div>
+  <!-- <footer class="foot">页面底部</footer> -->
+  {% endblock content %}
 
-<div id='new-alert' class='alert hidden'>
-</div>
-
-<div class='row' id='config'>
-  <div class='span12'>
-   <h3>Job Notes</h3>
-    <div id='notes-alert' class='alert hidden'>
-  </div>
-   <textarea id='job-notes'>{{ job.notes }}</textarea>
-    <br/>
-   <button id='save-notes' class='btn btn-success' onclick='return false;'>Save Notes</button>
-   <br/>
-   <br/>
-</div>
-
-<h3>Add New Task</h3>
-
-<form class='form'>
-
-  <label>Name</label>
-  <input id='new-task-name' class='input-xxlarge' type='text' placeholder='Task Name'></input>
-
-  <label class="checkbox">
-      <input type="checkbox" value="remote" id="remote_checkbox"> Remote
-  </label>
-  <div id="target_hosts" style="display: none;">
-    <label>Target Hosts:</label>
-        <select id="target-hosts-dropdown" name="target_hosts">
-        {% for host in hosts %}
-            <option value="{{ host }}">{{ host }}</option>
-        {% endfor %}
-    </select>
-  </div>
-
-  <label>Command</label>
-  <textarea id='new-task-command' rows="3" placeholder='Task Command'></textarea>
-
-  <br />
-  <button id='add-task' class='btn btn-success' onclick='return false;'>Add Task</button>
-
-</form>
-
-<div class='row'>
-  <div class='span12'>
-    <h3 class='inline'>{{ job.name }}'s Tasks</h3>
-
-    <div id='table-toggle' class='btn-group' data-toggle='buttons-radio'>
-      <button class='btn active' value='results'>Results</button>
-      <button class='btn' value='commands'>Commands</button>
-      <button class='btn' value='timeouts'>Timeouts</button>
-      <button class='btn' value='remote'>Remote</button>
-    </div>
-
-    <div id='table-alert' class='alert hidden'>
-    </div>
-
-    <table id='tasks-table' class='table'>
-      <thead id='tasks-headers'>
-      </thead>
-      <tbody id='tasks-body'>
-      </tbody>
-    </table>
-
-  </div>
-</div>
-
-{% endblock content %}
-
-{% block body_scripts %}
-<script src="/static/js/job_model.js"></script>
-<script src="/static/js/job_graph.js"></script>
-<script src="/static/js/job_detail.js"></script>
-{% endblock body_scripts %}
+  {% block body_scripts %}
+  <script src="/static/js/job_model.js"></script>
+  <script src="/static/js/job_graph.js"></script>
+  <script src="/static/js/job_detail.js"></script>
+  {% endblock body_scripts %}

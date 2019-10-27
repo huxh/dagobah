@@ -1,6 +1,6 @@
 // set up SVG for D3
-var width  = 940,
-    height = 600,
+var width  = $('.panelarea').width()/1.21, //780,
+    height = width * 0.6,
     gWidth = width * 5,
     gHeight = height * 5,
     nodeWidth = 150,

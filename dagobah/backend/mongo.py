@@ -141,7 +141,12 @@ class MongoBackend(BaseBackend):
                         values[key] = '\n'.join([values[key][:size / 2],
                                                  'DAGOBAH STREAM SPLIT',
                                                  values[key][-1 * (size / 2):]])
-        self.log_coll.save(dict(log_json.items() + append.items()))
+        # dict.items() + dict.items() is not support in py3 
+        # use dict1.update(dict2) 
+        # by Huxh
+        # self.log_coll.save(dict(log_json.items() + append.items()))
+        log_json.update(append)
+        self.log_coll.save(log_json)
 
     def get_latest_run_log(self, job_id, task_name):
         q = {'job_id': ObjectId(job_id),

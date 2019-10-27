@@ -1,7 +1,13 @@
 """ HTTP API methods for Dagobah daemon. """
 
 import json
-from io import StringIO
+
+# StringIO not work in py3
+# use BytesIO
+# by Huxh
+# from io import StringIO
+from io import BytesIO
+
 from future.builtins import str as text
 
 from flask import request, abort, send_file
@@ -458,11 +464,18 @@ def export_job():
 
     job = dagobah.get_job(args['job_name'])
 
-    to_send = StringIO()
-    to_send.write(u'%s' % text(json.dumps(job._serialize(strict_json=True))))
-    to_send.write(u'\n')
+    # StringIO not work in py3
+    # use BytesIO
+    # by Huxh
+    # to_send = StringIO()
+    # to_send.write(u'%s' % text(json.dumps(job._serialize(strict_json=True))))
+    # to_send.write(u'\n')
+    to_send = BytesIO()
+    to_send.write((text(json.dumps(job._serialize(strict_json=True)))).encode( encoding='utf-8' ))
+    to_send.write(b'\n')
+    
     to_send.seek(0)
-
+    
     return send_file(to_send,
                      attachment_filename='%s.json' % job.name,
                      as_attachment=True)
@@ -474,7 +487,7 @@ def export_job():
 def import_job():
     req_file = request.files['file']
     if req_file and allowed_file(req_file.filename, ['json']):
-        dagobah.add_job_from_json(req_file.read(), destructive=True)
+        dagobah.add_job_from_json(req_file.read().decode(), destructive=True)
 
 
 @app.route('/api/hosts', methods=['GET'])

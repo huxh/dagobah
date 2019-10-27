@@ -21,7 +21,7 @@
                 class={{ runtime }}>{{ runtime }}</span>
         </td>
         <td>
-            <button class='btn btn-primary' onclick="window.location.href = '{{ logURL }}';">View</button>
+            <button class='btn btn-primary' onclick="window.location.href = '{{ logURL }}';">查看</button>
         </td>
     </tr>
 </script>
@@ -35,25 +35,25 @@
 {% endblock head %}
 
 {% block navbar_current %}
-<li><a href='{{ url_for('job_detail', job_id=job.job_id) }}'>Job: {{ job.name }}</a></li>
-<li><a href='#'>Task Detail: {{ task_name }}</a></li>
+<li><a href='{{ url_for('job_detail', job_id=job.job_id) }}'>任务: {{ job.name }}</a></li>
+<li><a href='#'>步骤: {{ task_name }}</a></li>
 {% endblock navbar_current %}
 
 {% block content %}
 
 <div class='page-header'>
-  <h3>Task Detail: {{ task_name }}</h3>
+  <h3>步骤: {{ task_name }}</h3>
   <h3 id='task-status' class='right'></h3>
 </div>
 
 <div class='alert alert-caution'>
-  This page is still a work in progress. Information here may not be updated in realtime; refresh the page to make sure you're seeing accurate information.
+  页面内容暂未实时刷新，建议手动刷新页面以查看最新信息。
 </div>
 
-<div class='row' id='timeout'>
+<div class='row hidden' id='timeout'>
 
   <div class='span12'>
-    <h3>Task Timeouts (in seconds, 0 to disable)</h3>
+    <h3>步骤超时设置(单位秒，0表示不设超时处理)</h3>
   </div>
 
   <div class='span6'>
@@ -63,7 +63,7 @@
 
     <form id='soft-timeout-form' class='form form-horizontal'>
       <div class='control-group'>
-        <label class='control-label' for='soft-timeout'>Soft Timeout (TERM)</label>
+        <label class='control-label' for='soft-timeout'>软超时(中止操作)</label>
         <div class='controls'>
           <input id='soft-timeout' type='text' class='input'
                  value={{ task.soft_timeout }}></input>
@@ -71,7 +71,7 @@
       </div>
       <div class='control-group'>
         <div class='controls'>
-          <button id='save-soft-timeout' class='btn btn-success' onclick='return false;'>Set Soft Timeout</button>
+          <button id='save-soft-timeout' class='btn btn-success' onclick='return false;'>设定软超时</button>
         </div>
       </div>
     </form>
@@ -84,7 +84,7 @@
 
     <form id='hard-timeout-form' class='form form-horizontal'>
       <div class='control-group'>
-        <label class='control-label' for='hard-timeout'>Hard Timeout (KILL)</label>
+        <label class='control-label' for='hard-timeout'>硬超时(结束操作)</label>
         <div class='controls'>
           <input id='hard-timeout' type='text' class='input'
                  value={{ task.hard_timeout }}></input>
@@ -92,47 +92,48 @@
       </div>
       <div class='control-group'>
         <div class='controls'>
-          <button id='save-hard-timeout' class='btn btn-success' onclick='return false;'>Set Hard Timeout</button>
+          <button id='save-hard-timeout' class='btn btn-success' onclick='return false;'>设定硬超时</button>
         </div>
       </div>
     </form>
 
   </div>
 
-</div>
-
-Remote host:
+  远程主机地址:
 <input class="input-xxlarge" id="disabledInput" type="text"  value = {{ task.hostname}}>
 
-<div id='logs' class='row'>
-  <div class='span12'>
 
-    <h3>Run Logs</h3>
-
-    <div class='log-controls'>
-      <button id='head-stdout' class='btn btn-sequence btn-primary'>Head Stdout</button>
-      <button id='tail-stdout' class='btn btn-sequence btn-primary'>Tail Stdout</button>
-      <button id='head-stderr' class='btn btn-sequence btn-primary'>Head Stderr</button>
-      <button id='tail-stderr' class='btn btn-sequence btn-primary'>Tail Stderr</button>
-
-      <span id='log-type' class='right-header'></span>
-    </div>
-
-    <textarea id='log-detail' class='hidden'></textarea>
-
-  </div>
 </div>
 
 <table class='table table-striped'>
     <thead>
-        <th>Run ID</th>
-        <th>Completion Time</th>
-        <th>Runtime</th>
+        <th>运行编号</th>
+        <th>完成时刻</th>
+        <th>运行时长</th>
         <th></th>
     </thead>
     <tbody id='history-body'>
     </tbody>
 </table>
+
+<div id='logs' class='row'>
+    <div class='span12'>
+  
+      <h3>运行日志</h3>
+  
+      <div class='log-controls'>
+        <button id='head-stdout' class='btn btn-sequence btn-primary'>查看标准输出头部</button>
+        <button id='tail-stdout' class='btn btn-sequence btn-primary'>查看标准输出尾部</button>
+        <button id='head-stderr' class='btn btn-sequence btn-primary'>查看标准错误头部</button>
+        <button id='tail-stderr' class='btn btn-sequence btn-primary'>查看标准错误尾部</button>
+  
+        <span id='log-type' class='right-header'></span>
+      </div>
+  
+      <textarea id='log-detail' class='hidden'></textarea>
+  
+    </div>
+  </div>
 
 {% endblock content %}
 

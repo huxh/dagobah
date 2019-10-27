@@ -26,7 +26,7 @@ function applyTransformation(target, value, transformation) {
 
     if (transformation === 'datetime') {
         if (value !== null) {
-            $(target).text(moment.utc(value).local().format('lll'));
+            $(target).text(moment.utc(value).local().format('MMDD HH:mm:ss'));
         }
     } else if (transformation === 'class') {
         if (value !== null) {

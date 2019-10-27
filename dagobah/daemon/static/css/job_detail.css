@@ -46,9 +46,9 @@ textarea {
 	width: 100%;
 }
 
-#schedule label {
+/* #schedule label {
 	margin-top: -11px;
-}
+} */
 
 #table-toggle {
 	float: right;
@@ -82,6 +82,92 @@ div.relative-holder {
 
 .chart-help {
     border: 1px solid #EEEEEE;
-    margin-top: 10px;
-    margin-bottom: 10px;
+	position: absolute;
+	bottom:0px;
+	background-color: lightblue;
+	opacity:0.75;
+}
+
+.page-alert-fixed{
+	position:fixed;
+	top:0px;
+	z-index: 1030;
+	width:inherit;
+	height:40px;
+	pointer-events:none;
+}
+
+.page-sidebar-rel{
+	position: relative;
+	width:220px;
+	border: 1px solid yellow;
+
+}
+
+.page-sidebar-con{
+	border: 1px solid red;
+	width: 220px;
+}
+
+.page-sidebar-abs{
+	position:absolute;
+	z-index: 1030;
+	dispaly:block;
+}
+
+[class*="span"] {
+    float: left;
+    min-height: 1px;
+    margin-left: 0px;
+}
+
+.panelarea{
+	position: absolute;
+	top:150px;
+	width:inherit;
+}
+
+.mynotes{
+	margin:0px 0px;
+	width:900px;
+	background-color:rgb(205,205,205);
+	/* outline-color: invert ; */
+	/* outline-style: none ; */
+	/* outline-width: 0px ; */
+	/* border: none ; */
+	border-style: none ;
+	/* text-shadow: none ; */
+	/* outline-color: transparent ; */
+	box-shadow: none;
+}
+
+.monitor{
+	overflow:auto;
+	width:780px;
+	height:473px;
+}
+
+.table{
+	min-width: 1200px;
+}
+
+#dag-graph{
+	position:relative;
+}
+
+.center {
+	width: auto;
+	display: table;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.ssbutton{
+	margin:25px auto;
+	width:70px;
+
+}
+
+.myinput{
+	padding:0px 0px;
 }

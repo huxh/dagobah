@@ -18,11 +18,11 @@
       <td>
         <button class='btn btn-primary'
                 onclick="window.location.href = '{{ jobURL }}';">
-                View
+                查看
         </button>
         <button class='btn btn-info job-export'
                 onclick="window.location.href = '{{ exportURL }}';">
-                Export
+                导出
         </button>
         <button class='btn btn-danger job-delete' onclick="return false;"><i class='icon-trash'></i>
         </button>
@@ -41,7 +41,7 @@
     <td>
       <input type='text' class='submit-on-enter' data-original-name='{{ jobName }}'
              value='{{ jobName }}'></input>
-      <button class='btn btn-success save-job-name'>Save</button>
+      <button class='btn btn-success save-job-name'>确定</button>
     </td>
   </script>
 
@@ -51,18 +51,18 @@
 
 {% block content %}
 
-  <div class='page-header'><h3>Registered Jobs</h3></div>
+  <div class='page-header'><h3>任务列表</h3></div>
 
   <div id='table-alert' class='alert hidden'>
   </div>
 
   <table class='table table-striped'>
     <thead>
-      <th>Name</th>
-      <th>Status</th>
-      <th>Tasks</th>
-      <th>Schedule</th>
-      <th>Next Run</th>
+      <th>任务名称</th>
+      <th>运行状态</th>
+      <th>操作步骤</th>
+      <th>定时安排</th>
+      <th>次轮时刻</th>
       <th></th>
     </thead>
     <tbody id='jobs-body'>
@@ -75,10 +75,10 @@
   <div class='row'>
     <div class='span12'>
 
-      <h4 class='inline control-label'>Add New Job</h4>
+      <h4 class='inline control-label'>添加新任务</h4>
       <form class='form form-inline'>
         <input id='new-job-name' type='text' class='aligned-input' placeholder='Job Name'></input>
-        <button id='add-job' class='btn btn-success' onclick='return false;'>Add Job</button>
+        <button id='add-job' class='btn btn-success' onclick='return false;'>增加</button>
       </form>
 
     </div>
@@ -87,14 +87,14 @@
   <div class='row'>
     <div class='span12'>
 
-      <h4 class='inline control-label'>Import Job from JSON</h4>
+      <h4 class='inline control-label'>导入JSON任务文件</h4>
       <form id='job-importer' class='form form-inline'
             enctype='multipart/form-data'
             action='{{ url_for('jobs_import_view') }}'
             method='post'>
         <input id='new-job-name' type='file' name='file' class='aligned-input'></input>
         <button id='import-job' type='submit'
-                class='btn btn-success' onsubmit='return false;'>Import Job</button>
+                class='btn btn-success' onsubmit='return false;'>导入</button>
       </form>
 
     </div>

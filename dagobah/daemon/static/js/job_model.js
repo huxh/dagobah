@@ -167,10 +167,10 @@ Job.prototype.addDependency = function(link) {
         dataType: 'json',
         async: true,
         success: function() {
-            showAlert('graph-alert', 'success', 'Dependency from ' + fromName + ' to ' + toName + ' saved successfully.');
+            showAlert('alert', 'success', 'Dependency from ' + fromName + ' to ' + toName + ' saved successfully.');
         },
         error: function() {
-            showAlert('graph-alert', 'error', "There was an error saving this dependency. The dependency you were trying to add has been removed from the graph.");
+            showAlert('alert', 'error', "There was an error saving this dependency. The dependency you were trying to add has been removed from the graph.");
             that.removeDependencyFromGraph(fromName, toName);
         }
     });

@@ -7,10 +7,34 @@ body {
 }
 
 .alert {
-	margin-left: 0px;
-	width: 95%;
+	box-sizing: border-box;
+	margin: 0px;
+	width:inherit;
 }
 
 .inline {
 	display: inline-block;
 }
+
+.page-header-fixed{
+	position:fixed;
+	top:41px;
+	height:83px;
+	z-index: 1030;
+	width:inherit;
+	background-color:rgb(205,205,205);
+	border-bottom-style:solid;
+	border-bottom-width:2px;
+	border-bottom-color:blue;
+}
+
+.add-border{
+	border-style: double;
+	border-width: 2px;
+	border-color: lightgrey;
+}
+
+.parent-height{
+	height:inherit;
+}
+
